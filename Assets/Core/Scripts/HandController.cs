@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent ViveWandController];
+
 public class HandController : MonoBehaviour {
 
 	public GameObject cube;
