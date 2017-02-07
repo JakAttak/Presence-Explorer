@@ -25,6 +25,7 @@ public class CarSpawner : MonoBehaviour {
 
 	void spawnCar(float percent = 0.0f) {
 		cars.Add(Instantiate(prefab, startPos.position, prefab.transform.rotation));
+		cars[cars.Count - 1].transform.LookAt(endPos);
 		timePassed.Add(percent * timeToMove);
 	}
 
