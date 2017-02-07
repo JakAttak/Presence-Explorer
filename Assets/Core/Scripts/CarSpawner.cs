@@ -11,7 +11,7 @@ public class CarSpawner : MonoBehaviour {
 	Transform endPos;
 
 	[SerializeField]
-	GameObject prefab;
+	GameObject[] prefabs;
 
 	List<GameObject> cars = new List<GameObject>();
 	List<float> timePassed = new List<float>();
@@ -24,9 +24,16 @@ public class CarSpawner : MonoBehaviour {
 	}
 
 	void spawnCar(float percent = 0.0f) {
-		cars.Add(Instantiate(prefab, startPos.position, prefab.transform.rotation));
-		cars[cars.Count - 1].transform.LookAt(endPos);
+		cars.Add(createCar());
 		timePassed.Add(percent * timeToMove);
+	}
+
+	GameObject createCar() {
+		GameObject prefab = prefabs[(int) (Random.value * prefabs.Length)];
+		GameObject car = Instantiate(prefab, startPos.position, prefab.transform.rotation);
+		car.transform.LookAt(endPos);
+
+		return car;
 	}
 
 	void FixedUpdate() {
@@ -36,6 +43,8 @@ public class CarSpawner : MonoBehaviour {
 				cars[i].transform.position = Vector3.Lerp (startPos.position, endPos.position, timePassed[i] / timeToMove);
 
 				if (timePassed[i] >= timeToMove) {
+					GameObject.DestroyImmediate(cars[i]);
+					cars[i] = createCar();
 					timePassed[i] = 0;
 				}
 			}
