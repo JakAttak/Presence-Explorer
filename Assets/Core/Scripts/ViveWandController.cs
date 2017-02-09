@@ -19,6 +19,7 @@ public class ViveWandController : MonoBehaviour {
 	private SteamVR_Controller.Device controller;
 
 	void Start () {
+		// Initialize our variables based on SteamVR
 		trackedObj = GetComponent<SteamVR_TrackedObject>();
 		controller = SteamVR_Controller.Input ((int)trackedObj.index);
 	}
