@@ -1,13 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class HandController : MonoBehaviour {
 
 	public GameObject cube;
 	public Color change;
 
+	[SerializeField] GameObject hand;
+
 	private GameObject inside;
 	private FixedJoint holding;
+
+	private List<Vector3> holding_positions = new List<Vector3>();
 
 	private ViveWandController controller;
 
@@ -21,16 +26,38 @@ public class HandController : MonoBehaviour {
 			cube.GetComponent<Renderer>().material.color = change;	// change the color of the cube when you pull the trigger
 		}
 
-		//  pick up an object if the controller is inside it and the trigger is pulled
-		if (inside != null && controller.trigger_down) {
+		//  pick up an object if the controller is inside it and the trigger is pulled and it is not already being held
+		if (holding == null && inside != null && !inside.GetComponent<FixedJoint>() && controller.trigger_pressed) {
 			holding = inside.AddComponent<FixedJoint> ();
-			holding.connectedBody = GetComponent<Rigidbody> ();
+			holding.connectedBody = hand.GetComponent<Rigidbody> ();
 			print ("picked up object");
+
+			holding_positions.Clear();
 		}
 
-		if (holding != null && controller.trigger_down) {
-			//Object.DestroyImmediate (holding);
-			//holding = null;
+		if (holding != null) {
+			// fill and track position list
+			if (holding_positions.Count < 10) {
+				holding_positions.Add (inside.GetComponent<Rigidbody> ().position);
+				print ("Logged position: " + holding_positions [holding_positions.Count - 1]);
+			} else {
+				for (int i = 1; i < holding_positions.Count; i++) {
+					holding_positions [i - 1] = holding_positions [i];
+				}
+				holding_positions [holding_positions.Count - 1] = inside.GetComponent<Rigidbody> ().position;
+			}
+
+			if (controller.trigger_up) {
+				Object.DestroyImmediate (holding);
+				if (holding_positions.Count > 0) {
+					inside.GetComponent<Rigidbody> ().velocity =  (holding_positions [holding_positions.Count - 1] - holding_positions [0]) * 10;
+				}
+
+				print (inside.GetComponent<Rigidbody> ().velocity);
+				print (hand.GetComponent<Rigidbody> ().velocity);
+				holding = null;
+				inside = null;
+			}
 		}
 			
 	}
