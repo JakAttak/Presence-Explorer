@@ -36,7 +36,7 @@ public class HandController : MonoBehaviour {
 		}
 
 		if (holding != null) {
-			// fill and track position list
+			// fill / update position list
 			if (holding_positions.Count < 10) {
 				holding_positions.Add (inside.GetComponent<Rigidbody> ().position);
 				print ("Logged position: " + holding_positions [holding_positions.Count - 1]);
@@ -47,15 +47,16 @@ public class HandController : MonoBehaviour {
 				holding_positions [holding_positions.Count - 1] = inside.GetComponent<Rigidbody> ().position;
 			}
 
+			// throw the object when trigger is released
 			if (controller.trigger_up) {
-				Object.DestroyImmediate (holding);
+				Object.DestroyImmediate (holding); // destroy the joint holding the object to the hand
 				if (holding_positions.Count > 0) {
-					inside.GetComponent<Rigidbody> ().velocity =  (holding_positions [holding_positions.Count - 1] - holding_positions [0]) * 10;
+					inside.GetComponent<Rigidbody> ().velocity =  (holding_positions [holding_positions.Count - 1] - holding_positions [0]) * 10; // set the objects velocity to the average direction it traveled over the tracked frames, so that it will move with a velocity that matches what the player applied to it
 				}
 
 				print (inside.GetComponent<Rigidbody> ().velocity);
 				print (hand.GetComponent<Rigidbody> ().velocity);
-				holding = null;
+				holding = null; // set our variables to null because we are no longer holding anything
 				inside = null;
 			}
 		}

@@ -4,14 +4,11 @@ using UnityEngine;
 
 public class CarSpawner : MonoBehaviour {
 
-	[SerializeField]
-	Transform startPos;
+	[SerializeField] Transform startPos;
 
-	[SerializeField]
-	Transform endPos;
+	[SerializeField] Transform endPos;
 
-	[SerializeField]
-	GameObject[] prefabs;
+	[SerializeField]GameObject[] prefabs;
 
 	// Lists to hold the information about our cars
 	List<GameObject> cars = new List<GameObject>();
