@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class HandController : MonoBehaviour {
-
-	public GameObject cube;
 	public Color change;
 
 	[SerializeField] GameObject hand;
@@ -22,8 +20,8 @@ public class HandController : MonoBehaviour {
 	}
 
 	void FixedUpdate () {
-		if (controller.trigger_down) {
-			cube.GetComponent<Renderer>().material.color = change;	// change the color of the cube when you pull the trigger
+		if (inside != null && controller.grip_down) {
+			inside.GetComponent<Renderer>().material.color = change;	// change the color of the object when you pull the trigger
 		}
 
 		//  pick up an object if the controller is inside it and the trigger is pulled and it is not already being held
