@@ -14,6 +14,12 @@ public class ViveWandController : MonoBehaviour {
 	public bool trigger_up = false;
 	public bool trigger_pressed = false;
 
+	private Valve.VR.EVRButtonId trackpad_id = Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad;
+	public bool trackpad_down = false;
+	public bool trackpad_up = false;
+	public bool trackpad_pressed = false;
+
+
 	// Variables that link to which controller this script controls
 	private SteamVR_TrackedObject trackedObj;
 	private SteamVR_Controller.Device controller;
@@ -34,9 +40,12 @@ public class ViveWandController : MonoBehaviour {
 			trigger_down = controller.GetPressDown (trigger_id);
 			trigger_up = controller.GetPressUp (trigger_id);
 			trigger_pressed = controller.GetPress (trigger_id);
+
+			trackpad_down = controller.GetPressDown (trackpad_id);
+			trackpad_up = controller.GetPressUp (trackpad_id);
+			trackpad_pressed = controller.GetPress (trackpad_id);
 		} else {
 			print ("Controller not initialized");
-
 		}
 	}
 }

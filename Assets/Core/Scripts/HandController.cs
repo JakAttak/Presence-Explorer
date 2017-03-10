@@ -8,6 +8,8 @@ public class HandController : MonoBehaviour {
 	[SerializeField] GameObject hand;
 	[SerializeField] GameObject ball;
 
+	private LaserPointerModified laser_pointer;
+
 	private GameObject inside;
 	private FixedJoint holding;
 
@@ -18,6 +20,8 @@ public class HandController : MonoBehaviour {
 	void Start () {
 		// Initialize our controller as an instance of the ViveWandController class that is attached to
 		controller = GetComponent<ViveWandController> ();
+
+		laser_pointer = GetComponent<LaserPointerModified>();
 	}
 
 	void FixedUpdate () {
@@ -61,6 +65,14 @@ public class HandController : MonoBehaviour {
 			GameObject newBall = Instantiate(ball, hand.transform.position, Quaternion.identity);
 			newBall.GetComponent<Renderer> ().material.color = change;
 			print ("Created ball!");
+		}
+
+		// toggle the laser pointer on and off
+		if (controller.trackpad_down) {
+			laser_pointer.Activate ();
+		}
+		if (controller.trackpad_up) {
+			laser_pointer.DeActivate ();
 		}
 	}
 
