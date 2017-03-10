@@ -36,6 +36,7 @@ public class ViveWandController : MonoBehaviour {
 			trigger_pressed = controller.GetPress (trigger_id);
 		} else {
 			print ("Controller not initialized");
+
 		}
 	}
 }

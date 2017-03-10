@@ -6,6 +6,7 @@ public class HandController : MonoBehaviour {
 	public Color change;
 
 	[SerializeField] GameObject hand;
+	[SerializeField] GameObject ball;
 
 	private GameObject inside;
 	private FixedJoint holding;
@@ -20,10 +21,6 @@ public class HandController : MonoBehaviour {
 	}
 
 	void FixedUpdate () {
-		if (inside != null && controller.grip_down) {
-			inside.GetComponent<Renderer>().material.color = change;	// change the color of the object when you pull the trigger
-		}
-
 		//  pick up an object if the controller is inside it and the trigger is pulled and it is not already being held
 		if (holding == null && inside != null && !inside.GetComponent<FixedJoint>() && controller.trigger_pressed) {
 			holding = inside.AddComponent<FixedJoint> ();
@@ -35,7 +32,7 @@ public class HandController : MonoBehaviour {
 
 		if (holding != null) {
 			// fill / update position list
-			if (holding_positions.Count < 10) {
+			if (holding_positions.Count < 5) {
 				holding_positions.Add (inside.GetComponent<Rigidbody> ().position);
 				print ("Logged position: " + holding_positions [holding_positions.Count - 1]);
 			} else {
@@ -46,10 +43,10 @@ public class HandController : MonoBehaviour {
 			}
 
 			// throw the object when trigger is released
-			if (controller.trigger_up) {
+			if (controller.trigger_up || !controller.trigger_pressed) {
 				Object.DestroyImmediate (holding); // destroy the joint holding the object to the hand
 				if (holding_positions.Count > 0) {
-					inside.GetComponent<Rigidbody> ().velocity =  (holding_positions [holding_positions.Count - 1] - holding_positions [0]) * 10; // set the objects velocity to the average direction it traveled over the tracked frames, so that it will move with a velocity that matches what the player applied to it
+					inside.GetComponent<Rigidbody> ().velocity = (holding_positions [holding_positions.Count - 1] - holding_positions [0]) * 25; // set the objects velocity to the average direction it traveled over the tracked frames, so that it will move with a velocity that matches what the player applied to it
 				}
 
 				print (inside.GetComponent<Rigidbody> ().velocity);
@@ -58,7 +55,13 @@ public class HandController : MonoBehaviour {
 				inside = null;
 			}
 		}
-			
+
+		// spawn a ball if the grip button is pressed
+		if (!holding && controller.grip_up) { 
+			GameObject newBall = Instantiate(ball, hand.transform.position, Quaternion.identity);
+			newBall.GetComponent<Renderer> ().material.color = change;
+			print ("Created ball!");
+		}
 	}
 
 	// Set which object the controller is currently inside of
