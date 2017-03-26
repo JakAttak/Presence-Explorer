@@ -5,19 +5,23 @@ public class ViveWandController : MonoBehaviour {
 
 	// Variables for various controller buttons/states
 	private Valve.VR.EVRButtonId grip_id = Valve.VR.EVRButtonId.k_EButton_Grip;
-	public bool grip_down = false;
-	public bool grip_up = false;
-	public bool grip_pressed = false;
+	private bool grip_down = false;
+	private bool grip_up = false;
+	private bool grip_pressed = false;
 
 	private Valve.VR.EVRButtonId trigger_id = Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger;
-	public bool trigger_down = false;
-	public bool trigger_up = false;
-	public bool trigger_pressed = false;
+	private bool trigger_down = false;
+	private bool trigger_up = false;
+	private bool trigger_pressed = false;
 
 	private Valve.VR.EVRButtonId trackpad_id = Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad;
-	public bool trackpad_down = false;
-	public bool trackpad_up = false;
-	public bool trackpad_pressed = false;
+	private bool trackpad_down = false;
+	private bool trackpad_up = false;
+	private bool trackpad_pressed = false;
+
+	// variables for tracking the controller's position
+	private Vector3 prev_local_pos;
+	private Vector3 prev_pos;
 
 
 	// Variables that link to which controller this script controls
@@ -28,6 +32,14 @@ public class ViveWandController : MonoBehaviour {
 		// Initialize our variables based on SteamVR
 		trackedObj = GetComponent<SteamVR_TrackedObject>();
 		controller = SteamVR_Controller.Input ((int)trackedObj.index);
+
+		updatePreviousPositions ();
+	}
+
+	// updates previous position variables with the current position
+	private void updatePreviousPositions() {
+		prev_local_pos = getLocalPosition ();
+		prev_pos = getPosition ();
 	}
 
 	void FixedUpdate () {
@@ -44,8 +56,63 @@ public class ViveWandController : MonoBehaviour {
 			trackpad_down = controller.GetPressDown (trackpad_id);
 			trackpad_up = controller.GetPressUp (trackpad_id);
 			trackpad_pressed = controller.GetPress (trackpad_id);
+
+			updatePreviousPositions ();
 		} else {
 			print ("Controller not initialized");
 		}
+	}
+
+	// return the controller's current local position
+	public Vector3 getLocalPosition() {
+		return trackedObj.transform.localPosition;
+	}
+
+	// return the controller's current global position
+	public Vector3 getPosition() {
+		return trackedObj.transform.position;
+	}
+
+	// return the controller's previous local position
+	public Vector3 getPrevLocalPosition() {
+		return prev_local_pos;
+	}
+
+	// return the controller's current global position
+	public Vector3 getPrevPosition() {
+		return prev_pos;
+	}
+
+	// return the trigger's current state
+	public bool getTriggerPressed() {
+		return trigger_pressed;
+	}
+	public bool getTriggerDown() {
+		return trigger_down;
+	}
+	public bool getTriggerUp() {
+		return trigger_up;
+	}
+
+	// return the grip's current state
+	public bool getGripPressed() {
+		return grip_pressed;
+	}
+	public bool getGripDown() {
+		return grip_down;
+	}
+	public bool getGripUp() {
+		return grip_up;
+	}
+
+	// return the trackpad's current state
+	public bool getTrackpadPressed() {
+		return trackpad_pressed;
+	}
+	public bool getTrackpadDown() {
+		return trackpad_down;
+	}
+	public bool getTrackpadUp() {
+		return trackpad_up;
 	}
 }

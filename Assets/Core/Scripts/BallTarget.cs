@@ -23,7 +23,7 @@ public class BallTarget : MonoBehaviour {
 	
 	// Triggers actions based on if a ball hits it
 	private void OnTriggerEnter(Collider coll) {
-		if (coll.CompareTag ("Ball")) {
+		if (coll.tag.Contains ("Ball")) {
 			score += 1;
 			updateText ();
 			gameObject.GetComponent<Renderer> ().material.color = hitCol;

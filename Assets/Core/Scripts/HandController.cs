@@ -6,12 +6,14 @@ public class HandController : MonoBehaviour {
 	public Color change;
 
 	[SerializeField] GameObject hand;
+	[SerializeField] GameObject body;
 	[SerializeField] GameObject ball;
 
 	private LaserPointerModified laser_pointer;
 
 	private GameObject inside;
 	private FixedJoint holding;
+	private bool climbing;
 
 	private List<Vector3> holding_positions = new List<Vector3>();
 
@@ -21,15 +23,19 @@ public class HandController : MonoBehaviour {
 		// Initialize our controller as an instance of the ViveWandController class that is attached to
 		controller = GetComponent<ViveWandController> ();
 
+		// Initialize our laser pointer
 		laser_pointer = GetComponent<LaserPointerModified>();
+		laser_pointer.color = change;
+
+		// Color our hand properly
+		hand.GetComponent<Renderer> ().material.color = change;
 	}
 
 	void FixedUpdate () {
-		//  pick up an object if the controller is inside it and the trigger is pulled and it is not already being held
-		if (holding == null && inside != null && !inside.GetComponent<FixedJoint>() && controller.trigger_pressed) {
+		//  pick up an object if the controller is inside it and it is tagged as grabbable and the trigger is pulled and it is not already being held
+		if (holding == null && inside != null && inside.tag.Contains("Grabbable") && !inside.GetComponent<FixedJoint>() && controller.getTriggerPressed()) {
 			holding = inside.AddComponent<FixedJoint> ();
 			holding.connectedBody = hand.GetComponent<Rigidbody> ();
-			print ("picked up object");
 
 			holding_positions.Clear();
 		}
@@ -38,7 +44,6 @@ public class HandController : MonoBehaviour {
 			// fill / update position list
 			if (holding_positions.Count < 5) {
 				holding_positions.Add (inside.GetComponent<Rigidbody> ().position);
-				print ("Logged position: " + holding_positions [holding_positions.Count - 1]);
 			} else {
 				for (int i = 1; i < holding_positions.Count; i++) {
 					holding_positions [i - 1] = holding_positions [i];
@@ -47,32 +52,41 @@ public class HandController : MonoBehaviour {
 			}
 
 			// throw the object when trigger is released
-			if (controller.trigger_up || !controller.trigger_pressed) {
+			if (controller.getTriggerUp() || !controller.getTriggerPressed()) {
 				Object.DestroyImmediate (holding); // destroy the joint holding the object to the hand
 				if (holding_positions.Count > 0) {
 					inside.GetComponent<Rigidbody> ().velocity = (holding_positions [holding_positions.Count - 1] - holding_positions [0]) * 25; // set the objects velocity to the average direction it traveled over the tracked frames, so that it will move with a velocity that matches what the player applied to it
 				}
 
-				print (inside.GetComponent<Rigidbody> ().velocity);
-				print (hand.GetComponent<Rigidbody> ().velocity);
 				holding = null; // set our variables to null because we are no longer holding anything
 				inside = null;
 			}
 		}
 
 		// spawn a ball if the grip button is pressed
-		if (!holding && controller.grip_up) { 
+		if (!holding && controller.getGripUp()) { 
 			GameObject newBall = Instantiate(ball, hand.transform.position, Quaternion.identity);
 			newBall.GetComponent<Renderer> ().material.color = change;
-			print ("Created ball!");
 		}
 
 		// toggle the laser pointer on and off
-		if (controller.trackpad_down) {
+		if (controller.getTrackpadDown()) {
 			laser_pointer.Activate ();
 		}
-		if (controller.trackpad_up) {
+		if (controller.getTrackpadUp()) {
 			laser_pointer.DeActivate ();
+		}
+
+		// climbing
+		if (inside != null && inside.tag.Contains ("Handhold") && controller.getTriggerPressed ()) {
+			if (!climbing) {
+				body.GetComponent<LifeManager> ().updateHolds (1);
+				climbing = true;
+			}
+			body.transform.position += (controller.getPrevLocalPosition () - controller.getLocalPosition ());
+		} else if (climbing && !controller.getTriggerPressed()) {
+			body.GetComponent<LifeManager>().updateHolds (-1);
+			climbing = false;
 		}
 	}
 

@@ -40,7 +40,7 @@ public class TeleportModified : MonoBehaviour
 	}
 
 	void FixedUpdate() {
-		if (controller.trackpad_up) {
+		if (controller.getTrackpadUp()) {
 			DoClick ();
 		}
 	}
