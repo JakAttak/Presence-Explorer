@@ -13,7 +13,7 @@ public class HandController : MonoBehaviour {
 
 	private GameObject inside;
 	private FixedJoint holding;
-	private bool climbing;
+	private bool climbing = false;
 
 	private List<Vector3> holding_positions = new List<Vector3>();
 
@@ -76,18 +76,6 @@ public class HandController : MonoBehaviour {
 		if (controller.getTrackpadUp()) {
 			laser_pointer.DeActivate ();
 		}
-
-		// climbing
-		if (inside != null && inside.tag.Contains ("Handhold") && controller.getTriggerPressed ()) {
-			if (!climbing) {
-				body.GetComponent<LifeManager> ().updateHolds (1);
-				climbing = true;
-			}
-			body.transform.position += (controller.getPrevLocalPosition () - controller.getLocalPosition ());
-		} else if (climbing && !controller.getTriggerPressed()) {
-			body.GetComponent<LifeManager>().updateHolds (-1);
-			climbing = false;
-		}
 	}
 
 	// Set which object the controller is currently inside of
@@ -97,5 +85,21 @@ public class HandController : MonoBehaviour {
 
 	private void OnTriggerExit(Collider coll) {
 		inside = null;
+	}
+
+	public ViveWandController getController() {
+		return controller;
+	}
+
+	public bool isClimbing() {
+		return climbing;
+	}
+
+	public void setClimbing(bool n) {
+		climbing = n;
+	}
+
+	public bool canClimb() {
+		return (controller.getTriggerPressed () && (isClimbing() || (inside != null && inside.tag.Contains ("Handhold"))));
 	}
 }

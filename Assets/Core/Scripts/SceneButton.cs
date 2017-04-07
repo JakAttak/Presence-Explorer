@@ -15,12 +15,16 @@ public class SceneButton : MonoBehaviour {
 
 	// Do stuff when pressed
 	private void OnTriggerEnter(Collider coll) {
-		GetComponent<Renderer> ().material.color = Color.white;
+		if (coll.tag.Contains ("Player")) {
+			GetComponent<Renderer> ().material.color = Color.white;
+		}
 	}
 
 	private void OnTriggerExit(Collider coll) {
-		GetComponent<Renderer> ().material.color = col;
-		switchScene ();
+		if (coll.tag.Contains ("Player")) {
+			GetComponent<Renderer> ().material.color = col;
+			switchScene ();
+		}
 	}
 
 	// switch to the set scene
