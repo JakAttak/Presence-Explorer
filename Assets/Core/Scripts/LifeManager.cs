@@ -26,6 +26,8 @@ public class LifeManager : MonoBehaviour {
 		}
 			
 		// handle climbing
+		Vector3 boost = new Vector3(0, 0, 0);
+
 		if (!left.isClimbing () && left.canClimb()) {
 			left.setClimbing (true);
 			body.useGravity = false;
@@ -35,7 +37,7 @@ public class LifeManager : MonoBehaviour {
 			transform.position += (left.getController ().getPrevLocalPosition () - left.getController ().getLocalPosition ());
 		}
 		if (left.isClimbing () && !left.canClimb ()) {
-			body.velocity = (left.getController ().getPrevLocalPosition () - left.getController ().getLocalPosition ()) / Time.deltaTime;
+			boost = (left.getController ().getPrevLocalPosition () - left.getController ().getLocalPosition ()) / Time.deltaTime;
 			left.setClimbing (false);
 
 		}
@@ -48,13 +50,14 @@ public class LifeManager : MonoBehaviour {
 			transform.position += (right.getController ().getPrevLocalPosition () - right.getController ().getLocalPosition ());
 		}
 		if (right.isClimbing () && !right.canClimb ()) {
-			body.velocity = (right.getController ().getPrevLocalPosition () - right.getController ().getLocalPosition ()) / Time.deltaTime;
+			boost = (right.getController ().getPrevLocalPosition () - right.getController ().getLocalPosition ()) / Time.deltaTime;
 			right.setClimbing (false);
 		}
 
 		if (!left.isClimbing() && !right.isClimbing()) {
 			body.useGravity = true;
 			body.isKinematic = false;
+			body.velocity = body.velocity + boost * 1.5f;
 		}
 
 	}

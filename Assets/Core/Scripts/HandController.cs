@@ -55,7 +55,7 @@ public class HandController : MonoBehaviour {
 			if (controller.getTriggerUp() || !controller.getTriggerPressed()) {
 				Object.DestroyImmediate (holding); // destroy the joint holding the object to the hand
 				if (holding_positions.Count > 0) {
-					inside.GetComponent<Rigidbody> ().velocity = (holding_positions [holding_positions.Count - 1] - holding_positions [0]) * 25; // set the objects velocity to the average direction it traveled over the tracked frames, so that it will move with a velocity that matches what the player applied to it
+					inside.GetComponent<Rigidbody> ().velocity = (holding_positions [holding_positions.Count - 1] - holding_positions [0]) * 30; // set the objects velocity to the average direction it traveled over the tracked frames, so that it will move with a velocity that matches what the player applied to it
 				}
 
 				holding = null; // set our variables to null because we are no longer holding anything
