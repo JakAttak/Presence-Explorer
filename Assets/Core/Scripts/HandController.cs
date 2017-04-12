@@ -7,6 +7,7 @@ public class HandController : MonoBehaviour {
 
 	[SerializeField] GameObject hand;
 	[SerializeField] GameObject body;
+	[SerializeField] GameObject eyes;
 	[SerializeField] GameObject ball;
 
 	private LaserPointerModified laser_pointer;
@@ -14,6 +15,8 @@ public class HandController : MonoBehaviour {
 	private GameObject inside;
 	private FixedJoint holding;
 	private bool climbing = false;
+
+	[SerializeField] bool TELEPORT_ALLOWED = false;
 
 	private List<Vector3> holding_positions = new List<Vector3>();
 
@@ -63,17 +66,25 @@ public class HandController : MonoBehaviour {
 			}
 		}
 
-		// spawn a ball if the grip button is pressed
-		if (!holding && controller.getGripUp()) { 
+		// spawn a ball if the menu button is pressed
+		if (!holding && controller.getMenuUp()) { 
 			GameObject newBall = Instantiate(ball, hand.transform.position, Quaternion.identity);
 			newBall.GetComponent<Renderer> ().material.color = change;
 		}
 
+		// move if holding grip
+		if (controller.getGripPressed ()) {
+			Vector3 thrust = (controller.getLocalPosition () - controller.getPrevLocalPosition ()) / Time.deltaTime;
+			body.transform.position += eyes.transform.forward * (thrust.magnitude / 40);
+			print (controller);
+			print (thrust);
+		}
+
 		// toggle the laser pointer on and off
-		if (controller.getTrackpadDown()) {
+		if (controller.getTrackpadDown() && TELEPORT_ALLOWED) {
 			laser_pointer.Activate ();
 		}
-		if (controller.getTrackpadUp()) {
+		if (controller.getTrackpadUp() && TELEPORT_ALLOWED) {
 			laser_pointer.DeActivate ();
 		}
 	}

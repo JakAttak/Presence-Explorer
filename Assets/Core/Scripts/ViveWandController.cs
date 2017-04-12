@@ -19,6 +19,11 @@ public class ViveWandController : MonoBehaviour {
 	private bool trackpad_up = false;
 	private bool trackpad_pressed = false;
 
+	private Valve.VR.EVRButtonId menu_id = Valve.VR.EVRButtonId.k_EButton_ApplicationMenu;
+	private bool menu_down = false;
+	private bool menu_up = false;
+	private bool menu_pressed = false;
+
 	// variables for tracking the controller's position
 	private Vector3 prev_local_pos;
 	private Vector3 prev_pos;
@@ -56,6 +61,10 @@ public class ViveWandController : MonoBehaviour {
 			trackpad_down = controller.GetPressDown (trackpad_id);
 			trackpad_up = controller.GetPressUp (trackpad_id);
 			trackpad_pressed = controller.GetPress (trackpad_id);
+
+			menu_down = controller.GetPressDown (menu_id);
+			menu_up = controller.GetPressUp (menu_id);
+			menu_pressed = controller.GetPress (menu_id);
 
 			updatePreviousPositions ();
 		} else {
@@ -114,5 +123,16 @@ public class ViveWandController : MonoBehaviour {
 	}
 	public bool getTrackpadUp() {
 		return trackpad_up;
+	}
+
+	// return the menu's current state
+	public bool getMenuPressed() {
+		return menu_pressed;
+	}
+	public bool getMenuDown() {
+		return menu_down;
+	}
+	public bool getMenuUp() {
+		return menu_up;
 	}
 }
