@@ -22,5 +22,6 @@ Théo Arrouye - Senior Project 2017 ~ Unity VR Project
   
   
 ## Video:
+[![Presence Explorer Youtube Demo](https://i.imgur.com/mOz5Lad.png)](https://www.youtube.com/watch?v=0FmkgcUhGSA)
 - Link: https://www.youtube.com/watch?v=0FmkgcUhGSA 
 - (shows a version slightly older than what is in the repository)
